@@ -158,5 +158,5 @@ def getPort():
 		return "{'port' : '" + str(resp[0][0]) + "'}"
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run()
+	app.debug = True
+	app.run()
