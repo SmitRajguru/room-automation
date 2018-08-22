@@ -1,6 +1,9 @@
 from flask import Flask , request
 from Adafruit_IO import MQTTClient
 import psycopg2
+from datetime import datetime
+from notify_run import Notify
+import pytz
 
 hostname = 'ec2-54-163-246-5.compute-1.amazonaws.com'
 username = 'ccwbkzomgaturz'
@@ -10,13 +13,28 @@ database = 'd9uvpss3s3f0k'
 ADAFRUIT_IO_KEY = 'a8ce257319334cd29630749102997271'
 ADAFRUIT_IO_USERNAME = 'rajgurusmit'
 
+FEED_ID = 'door'
 FEED_ID_2 = 'update'
+
+notify = Notify(endpoint='https://notify.run/x0SrlFJiAOhrHTlW')
 
 app = Flask(__name__)
 
 myConnection = psycopg2.connect( host=hostname, user=username, password=password, dbname=database )
 
 cur = myConnection.cursor()
+
+# Msg send on door open
+def msg():
+	d = datetime.now()
+	print(d.strftime("%H:%M:%S - %d %b %y"))
+	HerokuTime = pytz.utc
+	IST = pytz.timezone("Asia/Kolkata")
+	d = HerokuTime.localize(d)
+	d = d.astimezone(IST)
+	s = d.strftime("%H:%M:%S - %d %b %y")
+	notify.send("Door Opened at " + s)
+
 
 # Define callback functions which will be called when certain events happen.
 def connected(client):
@@ -27,6 +45,7 @@ def connected(client):
 	print('Connected to Adafruit IO!  Listening for {0} changes...'.format(FEED_ID_2))
 	# Subscribe to changes on a feed named DemoFeed.
 	client.subscribe(FEED_ID_2)
+	client.subscribe(FEED_ID)
 
 def disconnected(client):
 	# Disconnected function will be called when the client disconnects.
@@ -37,6 +56,12 @@ def message(client, feed_id, payload):
 	# Message function will be called when a subscribed feed has a new value.
 	# The feed_id parameter identifies the feed, and the payload parameter has
 	# the new value.
+	if(payload == "Open"):
+		if(feed_id == FEED_ID):
+			msg()
+		else:
+			print("Feed Not Used")
+		client.publish(FEED_ID, "Closed", ADAFRUIT_IO_USERNAME)
 	print('Feed {0} received new value: {1}'.format(feed_id, payload))
 
 # Create an MQTT client instance.
