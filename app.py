@@ -132,13 +132,13 @@ def getValue():
 		cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
 		resp = cur.fetchall()
 		myConnection.commit()
-		return "{'value':'OFF'}"
+		return "{\"value\":\"OFF\"}"
 	else:
 		cur.execute("select value from feeds where id = " + str(resp[0][0]) + ";")
 		resp = cur.fetchall()
 		print("Getting feed of " + request.json['feed'] + " with the value of " + resp[0][0])
 		myConnection.commit()
-		return "{'value' : '" + str(resp[0][0]) + "'}"
+		return "{\"value\" : \"" + str(resp[0][0]) + "\"}"
 
 @app.route('/getPort', methods=['POST'])
 def getPort():
@@ -149,13 +149,13 @@ def getPort():
 		cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
 		resp = cur.fetchall()
 		myConnection.commit()
-		return "{'value':'OFF'}"
+		return "{\"value\":\"OFF\"}"
 	else:
 		cur.execute("select port from feeds where id = " + str(resp[0][0]) + ";")
 		resp = cur.fetchall()
 		print("Getting feed of " + request.json['feed'] + " with the port of " + resp[0][0])
 		myConnection.commit()
-		return "{'port' : '" + str(resp[0][0]) + "'}"
+		return "{\"port\" : \"" + str(resp[0][0]) + "\"}"
 
 if __name__ == '__main__':
 	app.debug = True
