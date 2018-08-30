@@ -5,6 +5,7 @@ from datetime import datetime
 from notify_run import Notify
 import pytz
 import requests
+import json
 
 hostname = 'ec2-54-163-246-5.compute-1.amazonaws.com'
 username = 'ccwbkzomgaturz'
@@ -211,9 +212,9 @@ def get():
 	data=""
 	cur.execute("select * from feeds;")
 	resp = cur.fetchall()
-	data = resp
+	data = {'list':resp}
 	response = app.response_class(
-        response=data,
+        response=json.dumps(data),
         status=200,
         mimetype='application/json'
     	)
