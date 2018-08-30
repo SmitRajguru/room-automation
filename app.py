@@ -1,6 +1,6 @@
 from flask import Flask , request
 from Adafruit_IO import MQTTClient
-import psycopg2,urllib2
+import psycopg2, urllib.request
 from datetime import datetime
 from notify_run import Notify
 import pytz
@@ -38,8 +38,8 @@ def home(isHome):
     for feed in home_feed_list:
         PARAMS = {'feed':feed,'value':value}
         data = json.dumps(PARAMS)
-        req = urllib2.Request(URL, data, {'Content-Type': 'application/json'})
-        f = urllib2.urlopen(req)
+        req = urllib.request(URL, data, {'Content-Type': 'application/json'})
+        f = urllib.urlopen(req)
         f.close()
         
     client.publish('activate', "True", ADAFRUIT_IO_USERNAME)
