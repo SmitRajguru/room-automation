@@ -187,7 +187,7 @@ def getPort():
 	return response
 
 @app.route('/get', methods=['POST'])
-def getPort():
+def get():
 	data=""
 	cur.execute("select * from feeds;")
 	resp = cur.fetchall()
