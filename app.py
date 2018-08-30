@@ -1,6 +1,6 @@
 from flask import Flask , request
 from Adafruit_IO import MQTTClient
-import psycopg2
+import psycopg2,urllib2
 from datetime import datetime
 from notify_run import Notify
 import pytz
@@ -25,6 +25,25 @@ myConnection = psycopg2.connect( host=hostname, user=username, password=password
 
 cur = myConnection.cursor()
 
+# home function
+def home(isHome):
+    home_feed_list = ['tubelight','fan']
+    value = ''
+    if(isHome):
+        value = 'ON'
+    else:
+        value = 'OFF'
+    
+    URL = "https://room-automation.herokuapp.com/setFeed"
+    for feed in home_feed_list:
+        PARAMS = {'feed':feed,'value':value}
+        data = json.dumps(PARAMS)
+        req = urllib2.Request(URL, data, {'Content-Type': 'application/json'})
+        f = urllib2.urlopen(req)
+        f.close()
+        
+    client.publish('activate', "True", ADAFRUIT_IO_USERNAME)
+    
 # Msg send on door open
 def msg():
 	d = datetime.now()
@@ -57,6 +76,8 @@ def message(client, feed_id, payload):
 	# Message function will be called when a subscribed feed has a new value.
 	# The feed_id parameter identifies the feed, and the payload parameter has
 	# the new value.
+	if(feed_id == FEED_ID_3):
+                home(payload=="True")
 	if(payload == "Open"):
 		if(feed_id == FEED_ID):
 			msg()
