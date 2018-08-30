@@ -66,6 +66,7 @@ def connected(client):
 	# Subscribe to changes on a feed named DemoFeed.
 	client.subscribe(FEED_ID_2)
 	client.subscribe(FEED_ID)
+	client.subscribe(FEED_ID_3)
 
 def disconnected(client):
 	# Disconnected function will be called when the client disconnects.
