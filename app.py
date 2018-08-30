@@ -1,9 +1,10 @@
 from flask import Flask , request
 from Adafruit_IO import MQTTClient
-import psycopg2, urllib.request
+import psycopg2
 from datetime import datetime
 from notify_run import Notify
-import pytz,json
+import pytz
+import requests
 
 hostname = 'ec2-54-163-246-5.compute-1.amazonaws.com'
 username = 'ccwbkzomgaturz'
@@ -37,10 +38,7 @@ def home(isHome):
     URL = "https://room-automation.herokuapp.com/setFeed"
     for feed in home_feed_list:
         PARAMS = {'feed':feed,'value':value}
-        data = json.dumps(PARAMS)
-        req = urllib.request(URL, data, {'Content-Type': 'application/json'})
-        f = urllib.urlopen(req)
-        f.close()
+        req = requests.post.request(url = URL, json = PARAMS)
         
     client.publish('activate', "True", ADAFRUIT_IO_USERNAME)
     
