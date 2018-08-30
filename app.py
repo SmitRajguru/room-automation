@@ -15,6 +15,7 @@ ADAFRUIT_IO_USERNAME = 'rajgurusmit'
 
 FEED_ID = 'door'
 FEED_ID_2 = 'update'
+FEED_ID_3 = 'home'
 
 notify = Notify(endpoint='https://notify.run/x0SrlFJiAOhrHTlW')
 
@@ -178,6 +179,19 @@ def getPort():
 		print("Getting feed of " + request.json['feed'] + " with the port of " + resp[0][0])
 		myConnection.commit()
 		data = "{\"port\" : \"" + str(resp[0][0]) + "\"}"
+	response = app.response_class(
+        response=data,
+        status=200,
+        mimetype='application/json'
+    	)
+	return response
+
+@app.route('/get', methods=['POST'])
+def getPort():
+	data=""
+	cur.execute("select * from feeds;")
+	resp = cur.fetchall()
+	data = resp
 	response = app.response_class(
         response=data,
         status=200,
