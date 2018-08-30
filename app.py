@@ -38,7 +38,7 @@ def home(isHome):
     URL = "https://room-automation.herokuapp.com/setFeed"
     for feed in home_feed_list:
         PARAMS = {'feed':feed,'value':value}
-        req = requests.post.request(url = URL, json = PARAMS)
+        req = requests.post(url = URL, json = PARAMS)
         
     client.publish('activate', "True", ADAFRUIT_IO_USERNAME)
     
