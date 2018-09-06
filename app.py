@@ -29,7 +29,7 @@ cur = myConnection.cursor()
 
 # home function
 def home(isHome):
-    home_feed_list = ['tubelight','fan','monitor1','monitor2','bias']
+    home_feed_list = ['tubelight','fan','monitor 1','monitor 2','bias']
     value = ''
     if(isHome):
         value = 'ON'
