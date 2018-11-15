@@ -104,30 +104,36 @@ client.loop_background()
 
 @app.route('/')
 def rebound():
-	cur.execute("select * from feeds;")
-	table = "<br />id , feed , value , port<br />"
-	resp = cur.fetchall()
-	if(resp == []):
-		return "Welcome to the Room-Automation Api.<br />The table is empty.<br />Add a feed."
-	for id,feed,value,port in resp:
-		table = table + str(id) + " , " + feed + " , " + value + " , " + str(port) + "<br />"
-	return "Welcome to the Room-Automation Api.<br />" + table 
+	try:
+		cur.execute("select * from feeds;")
+		table = "<br />id , feed , value , port<br />"
+		resp = cur.fetchall()
+		if(resp == []):
+			return "Welcome to the Room-Automation Api.<br />The table is empty.<br />Add a feed."
+		for id,feed,value,port in resp:
+			table = table + str(id) + " , " + feed + " , " + value + " , " + str(port) + "<br />"
+		return "Welcome to the Room-Automation Api.<br />" + table 
+	except:
+		return "Welcome to the Room-Automation Api.<br /> Error occured."
 
 @app.route('/setFeed', methods=['POST'])
 def setFeed():
 	data = ""
-	cur.execute("select id from feeds where feed = '" + request.json['feed'] + "';")
-	resp = cur.fetchall()
-	if(resp == []):
-		print("Adding new feed of " + request.json['feed'] + " to the database")
-		cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
-		myConnection.commit()
-		data = "{\"New data\":True}"
-	else:
-		print("Updating feed of " + request.json['feed'] + " to the value of " + request.json['value'])
-		cur.execute("update feeds set value = %s where feed = %s;",(request.json['value'],request.json['feed']))
-		myConnection.commit()
-		data = "{\"updated data\":True}"
+	try:
+		cur.execute("select id from feeds where feed = '" + request.json['feed'] + "';")
+		resp = cur.fetchall()
+		if(resp == []):
+			print("Adding new feed of " + request.json['feed'] + " to the database")
+			cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
+			myConnection.commit()
+			data = "{\"New data\":True}"
+		else:
+			print("Updating feed of " + request.json['feed'] + " to the value of " + request.json['value'])
+			cur.execute("update feeds set value = %s where feed = %s;",(request.json['value'],request.json['feed']))
+			myConnection.commit()
+			data = "{\"updated data\":True}"
+	except:
+		continue
 	response = app.response_class(
         response=data,
         status=200,
@@ -138,20 +144,23 @@ def setFeed():
 @app.route('/setPort', methods=['POST'])
 def setPort():
 	data=""
-	cur.execute("select id from feeds where feed = '" + request.json['feed'] + "';")
-	resp = cur.fetchall()
-	if(resp == []):
-		print("Adding new feed of " + request.json['feed'] + " to the database")
-		cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
-		myConnection.commit()
-		client.publish(FEED_ID_2, "True", ADAFRUIT_IO_USERNAME)
-		data = "{\"New data\":True}"
-	else:
-		print("Updating feed of " + request.json['feed'] + " to the port of " + request.json['port'])
-		cur.execute("update feeds set port = %s where feed = %s;",(request.json['port'],request.json['feed']))
-		myConnection.commit()
-		client.publish(FEED_ID_2, "True", ADAFRUIT_IO_USERNAME)
-		data = "{\"updated data\":True}"
+	try:
+		cur.execute("select id from feeds where feed = '" + request.json['feed'] + "';")
+		resp = cur.fetchall()
+		if(resp == []):
+			print("Adding new feed of " + request.json['feed'] + " to the database")
+			cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
+			myConnection.commit()
+			client.publish(FEED_ID_2, "True", ADAFRUIT_IO_USERNAME)
+			data = "{\"New data\":True}"
+		else:
+			print("Updating feed of " + request.json['feed'] + " to the port of " + request.json['port'])
+			cur.execute("update feeds set port = %s where feed = %s;",(request.json['port'],request.json['feed']))
+			myConnection.commit()
+			client.publish(FEED_ID_2, "True", ADAFRUIT_IO_USERNAME)
+			data = "{\"updated data\":True}"
+	except:
+		continue
 	response = app.response_class(
         response=data,
         status=200,
@@ -162,20 +171,23 @@ def setPort():
 @app.route('/getValue', methods=['POST'])
 def getValue():
 	data=""
-	cur.execute("select id from feeds where feed = '" + request.json['feed'] + "';")
-	resp = cur.fetchall()
-	if(resp == []):
-		print("Adding new feed of " + request.json['feed'] + " to the database")
-		cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
+	try:
+		cur.execute("select id from feeds where feed = '" + request.json['feed'] + "';")
 		resp = cur.fetchall()
-		myConnection.commit()
-		data = "{\"value\":\"OFF\"}"
-	else:
-		cur.execute("select value from feeds where id = " + str(resp[0][0]) + ";")
-		resp = cur.fetchall()
-		print("Getting feed of " + request.json['feed'] + " with the value of " + resp[0][0])
-		myConnection.commit()
-		data = "{\"value\" : \"" + str(resp[0][0]) + "\"}"
+		if(resp == []):
+			print("Adding new feed of " + request.json['feed'] + " to the database")
+			cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
+			resp = cur.fetchall()
+			myConnection.commit()
+			data = "{\"value\":\"OFF\"}"
+		else:
+			cur.execute("select value from feeds where id = " + str(resp[0][0]) + ";")
+			resp = cur.fetchall()
+			print("Getting feed of " + request.json['feed'] + " with the value of " + resp[0][0])
+			myConnection.commit()
+			data = "{\"value\" : \"" + str(resp[0][0]) + "\"}"
+	except:
+		continue
 	response = app.response_class(
         response=data,
         status=200,
@@ -186,20 +198,23 @@ def getValue():
 @app.route('/getPort', methods=['POST'])
 def getPort():
 	data=""
-	cur.execute("select id from feeds where feed = '" + request.json['feed'] + "';")
-	resp = cur.fetchall()
-	if(resp == []):
-		print("Adding new feed of " + request.json['feed'] + " to the database")
-		cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
+	try:
+		cur.execute("select id from feeds where feed = '" + request.json['feed'] + "';")
 		resp = cur.fetchall()
-		myConnection.commit()
-		data = "{\"value\":\"OFF\"}"
-	else:
-		cur.execute("select port from feeds where id = " + str(resp[0][0]) + ";")
-		resp = cur.fetchall()
-		print("Getting feed of " + request.json['feed'] + " with the port of " + resp[0][0])
-		myConnection.commit()
-		data = "{\"port\" : \"" + str(resp[0][0]) + "\"}"
+		if(resp == []):
+			print("Adding new feed of " + request.json['feed'] + " to the database")
+			cur.execute("insert into feeds(feed) values('" + request.json['feed'] + "');")
+			resp = cur.fetchall()
+			myConnection.commit()
+			data = "{\"value\":\"OFF\"}"
+		else:
+			cur.execute("select port from feeds where id = " + str(resp[0][0]) + ";")
+			resp = cur.fetchall()
+			print("Getting feed of " + request.json['feed'] + " with the port of " + resp[0][0])
+			myConnection.commit()
+			data = "{\"port\" : \"" + str(resp[0][0]) + "\"}"
+	except:
+		continue
 	response = app.response_class(
         response=data,
         status=200,
@@ -210,9 +225,12 @@ def getPort():
 @app.route('/get', methods=['POST'])
 def get():
 	data=""
-	cur.execute("select * from feeds;")
-	resp = cur.fetchall()
-	data = {'list':resp}
+	try:
+		cur.execute("select * from feeds;")
+		resp = cur.fetchall()
+		data = {'list':resp}
+	except:
+		continue
 	response = app.response_class(
         response=json.dumps(data),
         status=200,
