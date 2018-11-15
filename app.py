@@ -133,7 +133,7 @@ def setFeed():
 			myConnection.commit()
 			data = "{\"updated data\":True}"
 	except:
-		continue
+		data = "{\"updated data\":False}"
 	response = app.response_class(
         response=data,
         status=200,
@@ -160,7 +160,7 @@ def setPort():
 			client.publish(FEED_ID_2, "True", ADAFRUIT_IO_USERNAME)
 			data = "{\"updated data\":True}"
 	except:
-		continue
+		data = "{\"updated data\":False}"
 	response = app.response_class(
         response=data,
         status=200,
@@ -187,7 +187,7 @@ def getValue():
 			myConnection.commit()
 			data = "{\"value\" : \"" + str(resp[0][0]) + "\"}"
 	except:
-		continue
+		data = "{\"updated data\":False}"
 	response = app.response_class(
         response=data,
         status=200,
@@ -214,7 +214,7 @@ def getPort():
 			myConnection.commit()
 			data = "{\"port\" : \"" + str(resp[0][0]) + "\"}"
 	except:
-		continue
+		data = "{\"updated data\":False}"
 	response = app.response_class(
         response=data,
         status=200,
@@ -230,7 +230,7 @@ def get():
 		resp = cur.fetchall()
 		data = {'list':resp}
 	except:
-		continue
+		data = "{\"updated data\":False}"
 	response = app.response_class(
         response=json.dumps(data),
         status=200,
